@@ -22,27 +22,28 @@ Future<Task> fetchTasks() async {
 
 class Task {
   final String name;
-  final Object createdDate;
+/*  final Object createdDate;
   final Object startDate;
   final Object completeDate;
-  final Object deleteDate;
+  final Object deleteDate;*/
 
   const Task({
     required this.name,
-    required this.createdDate,
+    /*required this.createdDate,
     required this.startDate,
     required this.completeDate,
-    required this.deleteDate
+    required this.deleteDate*/
 
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) {
+  factory Task.fromJson(List<dynamic> json) {
     return Task(
-      name: json['name'],
-      createdDate: json['createdDate'],
+      //todo: figure out how to access  properly
+      name: json[0],
+    /*  createdDate: json['createdDate'],
       startDate: json['startDate'],
       completeDate: json['completeDate'],
-      deleteDate: json['deleteDate'],
+      deleteDate: json['deleteDate'],*/
     );
   }
 }
