@@ -4,7 +4,6 @@ A handy task tracking app!
 ##  diagram
 https://app.diagrams.net/#G1ndss5cntfZkj38Cg8YN7bJeWQc50z_Yn
 
-
 ### Scope
 
 Tasker

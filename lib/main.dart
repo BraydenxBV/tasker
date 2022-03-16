@@ -38,7 +38,7 @@ class Task {
 
   factory Task.fromJson(List<dynamic> json) {
     return Task(
-      //todo: figure out how to access  properly
+      //todo: populate 2 tasks with postMaster, access them properly,display list
       name: json[0],
     /*  createdDate: json['createdDate'],
       startDate: json['startDate'],
