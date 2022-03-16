@@ -89,7 +89,18 @@ class _MyAppState extends State<MyApp> {
             future: futureTasks,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data!.tasks.toString());
+                List taskslist = snapshot.data!.tasks;
+
+                return ListView.builder(
+                  itemCount: taskslist.length,
+                  itemBuilder: (context, index) {
+
+                    return ListTile(
+                      title: Text(taskslist[index].toString()),
+                    );
+                  },
+                );
+               // return Text(snapshot.data!.tasks.toString());
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
