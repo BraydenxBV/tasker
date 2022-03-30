@@ -52,7 +52,6 @@ class Tasks {
 
   factory Tasks.fromJson(List <dynamic> json) {
     return Tasks(
-      //todo: populate 2 tasks with postMaster, access them properly,display list
       tasks: json,
     );
   }
@@ -71,6 +70,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Future<Tasks> futureTasks;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -100,6 +100,7 @@ class _MyAppState extends State<MyApp> {
                   itemBuilder: (context, index) {
 
                     return ListTile(
+
                       title: Text(taskslist[index]['name'].toString()),
                       subtitle: Text(
                           "create at: ${dateFormatted(taskslist[index]["createdAt"])}"
@@ -107,10 +108,10 @@ class _MyAppState extends State<MyApp> {
                       trailing: Icon(Icons.more_vert),
                       isThreeLine: true,
                       onTap: () => print('temporary - will be a function'),
+                    //  shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1), borderRadius: BorderRadius.circular(5)),
                     );
                   },
                 );
-               // return Text(snapshot.data!.tasks.toString());
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
@@ -124,20 +125,77 @@ class _MyAppState extends State<MyApp> {
           height: 60,
           color: Colors.black12,
           child: InkWell(
-            onTap: () => print('temporary - will be a function'),
-            child: Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Column(
-                children: <Widget>[
-                  Icon(
-                    Icons.add_box_outlined,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  Text('New Task'),
-                ],
-              ),
-            ),
-          ),
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Stack(
+                        overflow: Overflow.visible,
+                        children: <Widget>[
+                          Positioned(
+                            right: -40.0,
+                            top: -40.0,
+                            child: InkResponse(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: CircleAvatar(
+                                child: Icon(Icons.close),
+                                backgroundColor: Colors.red,
+                              ),
+                            ),
+                          ),
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: TextFormField(),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: TextFormField(),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: RaisedButton(
+                                    child: Text("Submitß"),
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        _formKey.currentState!.save();
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
+
+
+              child:
+              Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Column(
+                  children: <Widget>[
+                    Icon(
+                      Icons.add_box_outlined,
+                      color: Theme
+                          .of(context)
+                          .accentColor,
+                    ),
+                    Text('New Task'),
+
+                  ],
+                ),
+              );
+            }),
         ),
 
 
