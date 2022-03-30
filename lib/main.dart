@@ -69,14 +69,39 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  //dialgoue prototpye
+/*  Future<void> showinformationDialog(BuildContext context) async{
+    return await showDialog(context: context,
+      builder:(context) {
+        return AlertDialog(
+          content: Text('1'),
+          actions:<Widget>[
+            TextButton(
+                onPressed: (){
+                  Navigator.of(context).pop();
+                },
+                child: Text('okay'))
+          ],
+        );
+      }   ,
+    );
+  }*/
+
+
   late Future<Tasks> futureTasks;
-  final _formKey = GlobalKey<FormState>();
+
 
   @override
   void initState() {
     super.initState();
     futureTasks = fetchTasks();
   }
+  Future openDialog() => showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text("YES!"),
+    ),);
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +150,14 @@ class _MyAppState extends State<MyApp> {
           height: 60,
           color: Colors.black12,
           child: InkWell(
-            onTap: () => print('temporary - will be a function'),
+            onTap: () {
+              openDialog();
+          },
         ),
-
       ),
-    ));
+    )
+
+
+    );
   }
 }
