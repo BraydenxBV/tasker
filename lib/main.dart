@@ -23,6 +23,13 @@ DateTime dateFormatted (int timestamp) {
    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
 }
 
+
+
+
+test(){
+  print('d');
+}
+
 class Task {
 
   final String name;
@@ -63,45 +70,45 @@ void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
 
-  //dialgoue prototpye
-/*  Future<void> showinformationDialog(BuildContext context) async{
+  //one of 2 ways trying to open the dialogue
+ Future<void> showTaskEditDialog(BuildContext context) async{
     return await showDialog(context: context,
       builder:(context) {
         return AlertDialog(
-          content: Text('1'),
+          content: Text('edit a task'),
           actions:<Widget>[
             TextButton(
                 onPressed: (){
                   Navigator.of(context).pop();
+                  test();
                 },
-                child: Text('okay'))
+                child: Text('complete')
+            ),
+            TextButton(
+                onPressed: (){
+                  Navigator.of(context).pop();
+                  test();
+                },
+                child: Text('Delete')
+            )
           ],
         );
       }   ,
     );
-  }*/
-
-
+  }
   late Future<Tasks> futureTasks;
-
-
   @override
   void initState() {
     super.initState();
     futureTasks = fetchTasks();
   }
-  Future openDialog() => showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text("YES!"),
-    ),);
+
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +139,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                       trailing: Icon(Icons.more_vert),
                       isThreeLine: true,
-                      onTap: () => print('temporary - will be a function'),
+                      onTap: () => showTaskEditDialog(context),
                     //  shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1), borderRadius: BorderRadius.circular(5)),
                     );
                   },
@@ -151,7 +158,7 @@ class _MyAppState extends State<MyApp> {
           color: Colors.black12,
           child: InkWell(
             onTap: () {
-              openDialog();
+             // showinformationDialog(context);
           },
         ),
       ),
