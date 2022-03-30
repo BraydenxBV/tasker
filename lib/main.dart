@@ -18,16 +18,36 @@ Future<Tasks> fetchTasks() async {
   }
 }
 
+Future<Tasks> startTask(String task) async {
+  final parsedTaskId = jsonDecode(task)['id'];
+
+  print('${task}');
+  print(parsedTaskId);
+
+  final response = await http
+      .get(Uri.parse('https://flutter-tasker-server.herokuapp.com/tasks/${parsedTaskId.toString()}/start'));
+
+  if (response.statusCode == 200) {
+    print(response.body);
+    fetchTasks();
+    return Tasks.fromJson(jsonDecode(response.body));
+  } else {
+    print(response.body);
+    throw Exception('Failed to load task');
+  }
+}
+
+
 // helper functions
 DateTime dateFormatted (int timestamp) {
    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
 }
 
 
-
-
-test(){
-  print('d');
+//useing to ensure I can pass data properly
+test(String task){
+  print('${task}');
+  print("!!");
 }
 
 class Task {
@@ -77,23 +97,24 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   //one of 2 ways trying to open the dialogue
- Future<void> showTaskEditDialog(BuildContext context) async{
+ Future<void> showTaskEditDialog(BuildContext context, String task) async{
+   final parsedTask = jsonDecode(task);
     return await showDialog(context: context,
       builder:(context) {
         return AlertDialog(
-          content: Text('edit a task'),
+          content: Text('${parsedTask['name'].toString()}'),
           actions:<Widget>[
             TextButton(
                 onPressed: (){
                   Navigator.of(context).pop();
-                  test();
+                  startTask(task);
                 },
-                child: Text('complete')
+                child: Text('start')
             ),
             TextButton(
                 onPressed: (){
                   Navigator.of(context).pop();
-                  test();
+                  test(task);
                 },
                 child: Text('Delete')
             )
@@ -139,7 +160,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                       trailing: Icon(Icons.more_vert),
                       isThreeLine: true,
-                      onTap: () => showTaskEditDialog(context),
+                      onTap: () => showTaskEditDialog(context, jsonEncode(taskslist[index])),
                     //  shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1), borderRadius: BorderRadius.circular(5)),
                     );
                   },
