@@ -204,7 +204,7 @@ class _MyAppState extends State<MyApp> {
     futureTasks = fetchTasks();
   }
 
-
+// James, I suspect I'm not adding my tasks to state properly and may be missing a few structual things, preventing event listeners from being implementable currently
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -269,6 +269,8 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       ),*/
+        
+        // james, No MaterialLocalizations found error
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showNewTaskDialog(context);
