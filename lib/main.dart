@@ -11,6 +11,7 @@ Future<Tasks> fetchTasks() async {
       .get(Uri.parse('https://flutter-tasker-server.herokuapp.com/tasks'));
 
   if (response.statusCode == 200) {
+
     return Tasks.fromJson(jsonDecode(response.body));
 
   } else {
@@ -29,7 +30,6 @@ Future<String> startTask(String task) async {
       .get(Uri.parse('https://flutter-tasker-server.herokuapp.com/tasks/${parsedTaskId.toString()}/start'));
 
   if (response.statusCode == 200) {
-    print(response.body);
     fetchTasks();
     return '';
   } else {
@@ -48,7 +48,6 @@ Future<String> deleteTask(String task) async {
       .get(Uri.parse('https://flutter-tasker-server.herokuapp.com/tasks/${parsedTaskId.toString()}/delete'));
 
   if (response.statusCode == 200) {
-    print(response.body);
     fetchTasks();
     return '';
   } else {
@@ -144,8 +143,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-List<Tasks> tasksListTest = [];
-  //one of 2 ways trying to open the dialogue
+
  Future<void> showTaskEditDialog(BuildContext context, String task) async{
    final parsedTask = jsonDecode(task);
     return await showDialog(context: context,
@@ -179,6 +177,26 @@ List<Tasks> tasksListTest = [];
       }   ,
     );
   }
+
+ Future<void> showNewTaskDialog(BuildContext context) async{
+   return await showDialog(context: context,
+     builder:(context) {
+       return AlertDialog(
+         content: Text('new task'),
+         actions:<Widget>[
+           TextButton(
+               onPressed: (){
+                 Navigator.of(context).pop();
+
+               },
+               child: Text('start')
+           )
+         ],
+       );
+     }   ,
+   );
+ }
+
   late Future<Tasks> futureTasks;
   @override
   void initState() {
@@ -242,15 +260,26 @@ List<Tasks> tasksListTest = [];
           ),
         ),
 
-        bottomNavigationBar: Container(
+     /*   bottomNavigationBar: Container(
           height: 60,
           color: Colors.black12,
           child: InkWell(
             onTap: () {
-             // showinformationDialog(context);
+              showNewTaskDialog(context);
           },
         ),
-      ),
+      ),*/
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showNewTaskDialog(context);
+          },
+          child: const Icon(
+            Icons.add_box_rounded,
+            color: Colors.white,
+
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     )
 
 
