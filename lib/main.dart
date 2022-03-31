@@ -12,13 +12,14 @@ Future<Tasks> fetchTasks() async {
 
   if (response.statusCode == 200) {
     return Tasks.fromJson(jsonDecode(response.body));
+
   } else {
 
     throw Exception('Failed to load tasks');
   }
 }
 
-Future<Tasks> startTask(String task) async {
+Future<String> startTask(String task) async {
   final parsedTaskId = jsonDecode(task)['id'];
 
   print('${task}');
@@ -30,7 +31,46 @@ Future<Tasks> startTask(String task) async {
   if (response.statusCode == 200) {
     print(response.body);
     fetchTasks();
-    return Tasks.fromJson(jsonDecode(response.body));
+    return '';
+  } else {
+    print(response.body);
+    throw Exception('Failed to load task');
+  }
+}
+
+Future<String> deleteTask(String task) async {
+  final parsedTaskId = jsonDecode(task)['id'];
+
+  print('${task}');
+  print(parsedTaskId);
+
+  final response = await http
+      .get(Uri.parse('https://flutter-tasker-server.herokuapp.com/tasks/${parsedTaskId.toString()}/delete'));
+
+  if (response.statusCode == 200) {
+    print(response.body);
+    fetchTasks();
+    return '';
+  } else {
+    print(response.body);
+    throw Exception('Failed to load task');
+  }
+}
+
+
+Future<String> completeTask(String task) async {
+  final parsedTaskId = jsonDecode(task)['id'];
+
+  print('${task}');
+  print(parsedTaskId);
+
+  final response = await http
+      .get(Uri.parse('https://flutter-tasker-server.herokuapp.com/tasks/${parsedTaskId.toString()}/complete'));
+
+  if (response.statusCode == 200) {
+    print(response.body);
+    fetchTasks();
+    return '';
   } else {
     print(response.body);
     throw Exception('Failed to load task');
@@ -41,6 +81,15 @@ Future<Tasks> startTask(String task) async {
 // helper functions
 DateTime dateFormatted (int timestamp) {
    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+}
+
+String taskStatus (String task) {
+  final parsedTask = jsonDecode(task);
+  if(parsedTask['completedAt'] != null) {
+    return 'task completed';
+  } else if (parsedTask['startedAt'] == null) {
+    return 'task not started';
+  }else return 'in progress';
 }
 
 
@@ -95,7 +144,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
+List<Tasks> tasksListTest = [];
   //one of 2 ways trying to open the dialogue
  Future<void> showTaskEditDialog(BuildContext context, String task) async{
    final parsedTask = jsonDecode(task);
@@ -114,7 +163,14 @@ class _MyAppState extends State<MyApp> {
             TextButton(
                 onPressed: (){
                   Navigator.of(context).pop();
-                  test(task);
+                  completeTask(task);
+                },
+                child: Text('complete')
+            ),
+            TextButton(
+                onPressed: (){
+                  Navigator.of(context).pop();
+                  deleteTask(task);
                 },
                 child: Text('Delete')
             )
@@ -148,19 +204,31 @@ class _MyAppState extends State<MyApp> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List taskslist = snapshot.data!.tasks;
+                List filteredTaskList = [];
+                taskslist.forEach((task) {
+                  if(task["deletedAt"] == null) {
+
+                    filteredTaskList.add(task);
+                  }
+                });
+
                 return ListView.builder(
-                  itemCount: taskslist.length,
+                  itemCount: filteredTaskList.length,
                   itemBuilder: (context, index) {
 
                     return ListTile(
 
-                      title: Text(taskslist[index]['name'].toString()),
+
+                      title: Text(filteredTaskList[index]['name'].toString()),
                       subtitle: Text(
-                          "create at: ${dateFormatted(taskslist[index]["createdAt"])}"
+                         'Status: ${taskStatus(jsonEncode(filteredTaskList[index]))}'
+                       //   "create at: ${dateFormatted(filteredTaskList[index]["createdAt"])}"
                       ),
                       trailing: Icon(Icons.more_vert),
                       isThreeLine: true,
-                      onTap: () => showTaskEditDialog(context, jsonEncode(taskslist[index])),
+                      // white not start, blue in progress, green completed
+                      tileColor: filteredTaskList[index]['startedAt'] == null ? Colors.white : filteredTaskList[index]['completedAt'] != null ? Colors.green : Colors.blue,
+                      onTap: () => showTaskEditDialog(context, jsonEncode(filteredTaskList[index])),
                     //  shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1), borderRadius: BorderRadius.circular(5)),
                     );
                   },
